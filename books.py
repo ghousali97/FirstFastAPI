@@ -17,7 +17,7 @@ BOOKS = [
 @app.get("/")
 async def root():
     """Root endpoint with a welcome message."""
-    return {"message": "Welcome to the Book API!"}
+    return {"message": "Welcome to the Book API! We have now started using multiple branches and pull requests to manage our code changes."}
 
 
 @app.post("/books")
