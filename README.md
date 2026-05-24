@@ -19,9 +19,16 @@ source .venv/bin/activate
 
 2. Install dependencies
 
+This project supports installing dependencies with the `uv` package manager. The following commands show how to use `uv` to install the dependencies declared in `pyproject.toml` or install packages directly.
+
+Using `uv` to install dependencies from `pyproject.toml`:
+
 ```bash
-python -m pip install --upgrade pip
-pip install -r <(python - <<PY
+# upgrade uv if available (optional)
+uv upgrade
+
+# install dependencies listed in pyproject.toml
+uv install -r <(python - <<PY
 import tomllib, sys
 with open('pyproject.toml', 'rb') as f:
     data = tomllib.load(f)
@@ -32,10 +39,10 @@ PY
 )
 ```
 
-Alternatively, install directly:
+Alternatively, install the runtime packages directly with `uv`:
 
 ```bash
-pip install "fastapi>=0.136.1" "uvicorn[standard]>=0.47.0"
+uv install "fastapi>=0.136.1" "uvicorn[standard]>=0.47.0"
 ```
 
 3. Run the app with uvicorn (from project root)
