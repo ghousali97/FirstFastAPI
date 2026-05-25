@@ -1,3 +1,4 @@
+from email import message
 from typing import Optional, List
 \
 from fastapi import FastAPI, HTTPException, Body,Response
@@ -5,13 +6,35 @@ from fastapi import FastAPI, HTTPException, Body,Response
 app = FastAPI()  # Create a FastAPI instance
 
 
+# BOOKS = [
+#      {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "category": "Classic"},
+#      {"title": "To Kill a Mockingbird", "author": "Harper Lee", "category": "Fiction"},
+#      {"title": "1984", "author": "George Orwell", "category": "Dystopian"},
+#         {"title": "1994", "author": "George Orwell", "category": "Dystopian"},
+#            {"title": "1974", "author": "George Orwell", "category": "Dystopian"},
+# ]
+
+
+class Book:
+    id: int
+    title: str
+    author: str
+    description: int
+    rating: int
+    """A simple Book class to represent book entries."""
+    def __init__(self, id: int, title: str, author: str, description: int, rating: int):        
+        self.id = id
+        self.title = title
+        self.author = author
+        self.description = description
+        self.rating = rating
+
 BOOKS = [
-     {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "category": "Classic"},
-     {"title": "To Kill a Mockingbird", "author": "Harper Lee", "category": "Fiction"},
-     {"title": "1984", "author": "George Orwell", "category": "Dystopian"},
-        {"title": "1994", "author": "George Orwell", "category": "Dystopian"},
-           {"title": "1974", "author": "George Orwell", "category": "Dystopian"},
-]
+    Book(1, "The Great Gatsby", "F. Scott Fitzgerald", "A novel set in the Roaring Twenties, exploring themes of wealth, love, and the American Dream.", 4),
+    Book(2, "To Kill a Mockingbird", "Harper Lee", "A story of racial injustice and moral growth in the Deep South, seen through the eyes of young Scout Finch.", 5),
+    Book(3, "1984", "George Orwell", "A dystopian novel depicting a totalitarian society under constant surveillance, where independent thought is suppressed.", 5),
+    Book(4, "1994", "George Orwell", "A dystopian novel depicting a totalitarian society under constant surveillance, where independent thought is suppressed.", 5),
+]  # In-memory list to store book entries  
 
 
 @app.get("/")
@@ -22,21 +45,16 @@ async def root():
 
 @app.post("/books")
 #Body() is used to indicate that the function expects a JSON body in the request. It allows FastAPI to automatically parse the incoming JSON data and convert it into a Python dictionary that can be used within the function.
-async def create_book(book=Body()):
+async def create_book(book_request = Body()):
     """Create a new book entry.
 
     - Expects a JSON body with `title`, `author`, and optionally `category`.
     - Returns the created book with a 201 status code.
     """
-    print(f"Received book data: {book}")  # Debug print to check incoming data
-    if book.get("title") and book.get("author") and book.get("category"):
-        for b in BOOKS:
-            if b.get("title") == book.get("title"):
-                raise HTTPException(status_code=400, detail="Book with the same title already exists")
-        BOOKS.append(book)
-        return book
-    else:
-        raise HTTPException(status_code=400, detail="Book must have title, author, and category")   
+    new_book = Book(book_request.get("id"), book_request.get("title"), book_request.get("author"), book_request.get("description"), book_request.get("rating"))
+    BOOKS.append(new_book)
+
+    return Response(content='{"message": "Book created"}', status_code=201)
 
 
 @app.put("/books/")
@@ -66,10 +84,11 @@ async def read_all_books(category: Optional[str] = None):
     - Returns 200 with a list of books when found.
     - Returns 404 when category is provided but no books match.
     """
+
     if category:
         results = [b for b in BOOKS if b.get("category") and b.get("category").lower() == category.lower()]
-        if not results:
-            raise HTTPException(status_code=404, detail="No books found in this category")
+        #if not results:
+        #    raise HTTPException(status_code=404, detail="No books found in this category")
         return results
     return BOOKS
 
@@ -91,9 +110,10 @@ async def read_book(book_id: int):
 # FastAPI will automatically handle the query parameters and pass them to the function.
 #We must set default values to None for the query parameters to make them optional, allowing users to search by any combination of attributes.
 async def read_book_by_attributes(book_title: str=None, book_author: str=None, category: str=None):
-    """Return all books by title / author/ category.
+    """Return a list of books matching title, author, or category.
 
-    This validates the title and author and returns a 404 HTTP error when no matching book is found.
+    Returns a (possibly empty) list of books that match any of the provided attributes.
+    Does not raise 404 if no books match, but returns an empty list (mirrors read_all_books behavior).
     """
     results = []
     for book in BOOKS:
@@ -103,8 +123,6 @@ async def read_book_by_attributes(book_title: str=None, book_author: str=None, c
             results.append(book)
         if category and book.get("category").lower() == category.lower():
             results.append(book)
-    if not results:
-        raise HTTPException(status_code=404, detail="No books found matching the criteria")
     return results
         
 @app.delete("/books/{book_title}")

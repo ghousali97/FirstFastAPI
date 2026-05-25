@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "description": "A dystopian novel about a future society driven by technology and control.",
+    "rating": 5,
+    "category": "Dystopian"
+  },
+  {
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "description": "A story about teenage alienation and loss of innocence.",
+    "rating": 4,
+    "category": "Fiction"
+  },
+  {
+    "title": "Sapiens: A Brief History of Humankind",
+    "author": "Yuval Noah Harari",
+    "description": "A narrative of humanity's creation and evolution.",
+    "rating": 5,
+    "category": "Non-fiction"
+  },
+  {
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "description": "Bilbo Baggins goes on an unexpected journey in Middle-earth.",
+    "rating": 5,
+    "category": "Fantasy"
+  },
+  {
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "description": "A fable about following your dreams and listening to your heart.",
+    "rating": 4,
+    "category": "Fiction"
+  }
+]
