@@ -87,8 +87,8 @@ async def read_all_books(category: Optional[str] = None):
 
     if category:
         results = [b for b in BOOKS if b.get("category") and b.get("category").lower() == category.lower()]
-        if not results:
-            raise HTTPException(status_code=404, detail="No books found in this category")
+        #if not results:
+        #    raise HTTPException(status_code=404, detail="No books found in this category")
         return results
     return BOOKS
 
