@@ -110,9 +110,10 @@ async def read_book(book_id: int):
 # FastAPI will automatically handle the query parameters and pass them to the function.
 #We must set default values to None for the query parameters to make them optional, allowing users to search by any combination of attributes.
 async def read_book_by_attributes(book_title: str=None, book_author: str=None, category: str=None):
-    """Return all books by title / author/ category.
+    """Return a list of books matching title, author, or category.
 
-    This validates the title and author and returns a 404 HTTP error when no matching book is found.
+    Returns a (possibly empty) list of books that match any of the provided attributes.
+    Does not raise 404 if no books match, but returns an empty list (mirrors read_all_books behavior).
     """
     results = []
     for book in BOOKS:
@@ -122,8 +123,6 @@ async def read_book_by_attributes(book_title: str=None, book_author: str=None, c
             results.append(book)
         if category and book.get("category").lower() == category.lower():
             results.append(book)
-    if not results:
-        raise HTTPException(status_code=404, detail="No books found matching the criteria")
     return results
         
 @app.delete("/books/{book_title}")
